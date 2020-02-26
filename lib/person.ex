@@ -14,7 +14,6 @@ defmodule Person do
     Add new person
 
     ## Examples
-    iex> Person.start_link
     iex> person = %Person{name: "Petya", surname: "Ivanov", age: 20}
     iex> Person.add(person)
     :ok
@@ -27,12 +26,26 @@ defmodule Person do
 
     ## Examples
     iex> person = %Person{name: "Petya", surname: "Ivanov", age: 20}
+    iex> Person.add(person)
     iex> Person.remove(person)
     :ok
   """
   @spec remove(Person.t()) :: :ok | :not_found
   def remove(%Person{} = person) do
     GenServer.call(@server, {:remove, person})
+  end
+
+  @doc """
+    Get age of person by name and surname
+
+    ## Examples
+    iex> person = %Person{name: "Petya", surname: "Ivanov", age: 20}
+    iex> Person.add(person)
+    iex> Person.age_of("Petya Ivanov")
+    20
+  """
+  def age_of(person_name) when is_binary(person_name) do
+    GenServer.call(@server, {:age_of, person_name})
   end
 
   @spec status :: {:status, pid, {:module, atom}, [any]}

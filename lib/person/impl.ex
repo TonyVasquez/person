@@ -16,4 +16,12 @@ defmodule Person.Impl do
       _ -> {:not_found, state}
     end
   end
+
+  @spec age_of(binary, map) :: integer
+  def age_of(person_name, state) when is_binary(person_name) do
+    case state[person_name] do
+      %Person{age: age} -> age
+      _ -> :not_found
+    end
+  end
 end
