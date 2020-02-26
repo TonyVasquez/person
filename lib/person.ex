@@ -48,6 +48,23 @@ defmodule Person do
     GenServer.call(@server, {:age_of, person_name})
   end
 
+  @doc """
+    Find persons by age
+
+    ##Example
+    iex> Person.add(%Person{name: "Petya", surname: "Ivanov", age: 20})
+    iex> Person.add(%Person{name: "Bob", surname: "Jin", age: 20})
+    iex> Person.find_by_age(20)
+    [
+      %Person{name: "Petya", surname: "Ivanov", age: 20},
+      %Person{name: "Bob", surname: "Jin", age: 20}
+    ]
+  """
+  @spec find_by_age(integer) :: [Person.t()]
+  def find_by_age(age) when is_integer(age) do
+    GenServer.call(@server, {:find_by_age, age})
+  end
+
   @spec status :: {:status, pid, {:module, atom}, [any]}
   def status, do: :sys.get_status(@server)
 end

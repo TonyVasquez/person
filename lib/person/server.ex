@@ -24,6 +24,10 @@ defmodule Person.Server do
     {:reply, Impl.age_of(person_name, state), state}
   end
 
+  def handle_call({:find_by_age, age}, _from, state) do
+    {:reply, Impl.find_by_age(age, state), state}
+  end
+
   def handle_call(:reset_state, _from, _state) do
     {:reply, :ok, %{}}
   end

@@ -18,10 +18,20 @@ defmodule Person.Impl do
   end
 
   @spec age_of(binary, map) :: integer
-  def age_of(person_name, state) when is_binary(person_name) do
+  def age_of(person_name, state) do
     case state[person_name] do
       %Person{age: age} -> age
       _ -> :not_found
     end
+  end
+
+  def find_by_age(age, state) do
+    Enum.reduce(state, [], fn {_name, person}, acc ->
+      if person.age == age do
+        [person | acc]
+      else
+        acc
+      end
+    end)
   end
 end

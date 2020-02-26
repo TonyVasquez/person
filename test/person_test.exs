@@ -38,4 +38,18 @@ defmodule PersonTest do
       assert 20 == Person.age_of(name)
     end
   end
+
+  describe "find by age" do
+    test "when persons founded" do
+      [
+        %Person{name: "Petya", surname: "Ivanov", age: 20},
+        %Person{name: "Alex", surname: "Ruf", age: 20},
+        %Person{name: "Bob", surname: "Jin", age: 25}
+      ]
+      |> Enum.each(&Person.add/1)
+
+      founded_persons_name = Person.find_by_age(20) |> Enum.map(& &1.name) |> Enum.sort()
+      assert founded_persons_name == ["Alex", "Petya"]
+    end
+  end
 end
