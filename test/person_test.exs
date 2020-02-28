@@ -1,5 +1,5 @@
 defmodule PersonTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Person
 
   setup_all do
@@ -10,7 +10,14 @@ defmodule PersonTest do
   setup do
     GenServer.call(Person.Server, :reset_state)
     person = %Person{name: "Petya", surname: "Ivanov", age: 20}
-    [person: person]
+
+    group = [
+      %Person{name: "Petya", surname: "Ivanov", age: 20},
+      %Person{name: "Alex", surname: "Ruf", age: 20},
+      %Person{name: "Bob", surname: "Jin", age: 25}
+    ]
+
+    [person: person, group: group]
   end
 
   describe "add person to db" do
@@ -18,13 +25,8 @@ defmodule PersonTest do
       assert :ok == Person.add(context.person)
     end
 
-    test "async add" do
-      [
-        %Person{name: "Petya", surname: "Ivanov", age: 20},
-        %Person{name: "Alex", surname: "Ruf", age: 20},
-        %Person{name: "Bob", surname: "Jin", age: 25}
-      ]
-      |> Enum.each(fn person ->
+    test "async add", context do
+      Enum.each(context.group, fn person ->
         spawn(fn -> Person.add(person) end)
       end)
 
@@ -60,13 +62,8 @@ defmodule PersonTest do
   end
 
   describe "find by age" do
-    test "when persons founded" do
-      [
-        %Person{name: "Petya", surname: "Ivanov", age: 20},
-        %Person{name: "Alex", surname: "Ruf", age: 20},
-        %Person{name: "Bob", surname: "Jin", age: 25}
-      ]
-      |> Enum.each(&Person.add/1)
+    test "when persons founded", context do
+      Enum.each(context.group, &Person.add/1)
 
       founded_persons_name = Person.find_by_age(20) |> Enum.map(& &1.name) |> Enum.sort()
       assert founded_persons_name == ["Alex", "Petya"]
