@@ -17,6 +17,26 @@ defmodule PersonTest do
     test "added successfully", context do
       assert :ok == Person.add(context.person)
     end
+
+    test "async add" do
+      [
+        %Person{name: "Petya", surname: "Ivanov", age: 20},
+        %Person{name: "Alex", surname: "Ruf", age: 20},
+        %Person{name: "Bob", surname: "Jin", age: 25}
+      ]
+      |> Enum.each(fn person ->
+        spawn(fn -> Person.add(person) end)
+      end)
+
+      Process.sleep(100)
+
+      group_20 = Person.find_by_age(20) |> Enum.map(& &1.name)
+      group_25 = Person.find_by_age(25) |> Enum.map(& &1.name)
+
+      assert "Petya" in group_20
+      assert "Alex" in group_20
+      assert "Bob" in group_25
+    end
   end
 
   describe "remove person from db" do
