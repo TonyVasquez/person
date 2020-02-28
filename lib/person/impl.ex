@@ -25,6 +25,7 @@ defmodule Person.Impl do
     end
   end
 
+  @spec find_by_age(integer, map) :: [Person.t()]
   def find_by_age(age, state) do
     Enum.reduce(state, [], fn {_name, person}, acc ->
       if person.age == age do

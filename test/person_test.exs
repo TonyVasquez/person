@@ -51,5 +51,9 @@ defmodule PersonTest do
       founded_persons_name = Person.find_by_age(20) |> Enum.map(& &1.name) |> Enum.sort()
       assert founded_persons_name == ["Alex", "Petya"]
     end
+
+    test "when persons not found" do
+      assert Person.find_by_age(20) == []
+    end
   end
 end
