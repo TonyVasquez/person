@@ -1,14 +1,23 @@
 defmodule Person.Server do
+  alias Person.Backup
+
   @moduledoc """
     Server for manage persons
   """
   use GenServer
 
+  @me __MODULE__
+
   alias Person.Impl
 
+  def start_link(_opts) do
+    GenServer.start_link(@me, %{}, name: @me)
+  end
+
   @spec init(any) :: {:ok, any}
-  def init(args) do
-    {:ok, args}
+  def init(_args) do
+    Process.flag(:trap_exit, true)
+    {:ok, Backup.recover()}
   end
 
   def handle_call({:add, %Person{} = person}, _from, state) do
@@ -30,5 +39,11 @@ defmodule Person.Server do
 
   def handle_call(:reset_state, _from, _state) do
     {:reply, :ok, %{}}
+  end
+
+  def terminate(_reason, state), do: Backup.run(state)
+
+  def handle_cast(:kill, _state) do
+    raise "kill"
   end
 end

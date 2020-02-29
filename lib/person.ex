@@ -6,10 +6,6 @@ defmodule Person do
 
   @server Person.Server
 
-  def start_link do
-    GenServer.start_link(@server, %{}, name: @server)
-  end
-
   @doc """
     Add new person
 

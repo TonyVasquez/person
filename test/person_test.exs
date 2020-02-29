@@ -2,11 +2,6 @@ defmodule PersonTest do
   use ExUnit.Case, async: true
   doctest Person
 
-  setup_all do
-    Person.start_link()
-    :ok
-  end
-
   setup do
     GenServer.call(Person.Server, :reset_state)
     person = %Person{name: "Petya", surname: "Ivanov", age: 20}
